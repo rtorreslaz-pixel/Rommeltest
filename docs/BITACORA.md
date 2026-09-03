@@ -58,6 +58,13 @@ calidad del pollo en el cliente + pesaje preventa en granja. Omnicanal:
 - **Descargas filtradas por fecha**: toda exportación de la web acepta `desde`/`hasta` y usa el
   mismo filtro que la pantalla ("lo que se ve es lo que se descarga"). Los filtros viven en
   `src/lib/*-filtros.ts` para que pantalla y CSV no se desincronicen.
+- **Resumen por galpón** (`/resumen-galpon`): pesaje de preventa agrupado por el complex hasta galpón
+  (`Plantel-Campaña-Galpón`, `buildComplexGalpon`) y, dentro, un muestreo por corral·sexo·día. Promedio,
+  desviación **muestral** (n−1), CV y uniformidad (±10 % por defecto, ±15 % opcional) en
+  `src/lib/estadisticas-peso.ts` (puro, verificado contra `statistics` de Python). Las pesadas de varias
+  aves juntas (`nAvesPorPesada > 1`) entran al promedio ponderado pero **no** a desviación/CV/uniformidad
+  (promediar antes achica la dispersión); se muestran aparte como "en grupo". Un galpón con dos sexos
+  muestra además el desglose por sexo. Excel/CSV en `/api/resumen-galpon/export`.
 - **Descarga en Excel**: los botones de la web piden `?formato=xlsx` y reciben un `.xlsx` real
   (`src/lib/xlsx.ts`, un ZIP con los XML de OOXML armado con el mismo `crearZip` de la evidencia;
   sin dependencias nuevas). El **CSV sigue siendo el predeterminado** del endpoint para no romper

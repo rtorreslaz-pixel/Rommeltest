@@ -42,6 +42,19 @@ export function buildComplexLote(parts: {
   return piezas.join("-");
 }
 
+/**
+ * Complex a NIVEL GALPÓN: Plantel-Campaña-Galpón, sin categoría ni corral. Es la clave del
+ * resumen por galpón: agrupa los muestreos de los 4 corrales (y de ambos sexos, si los hay)
+ * bajo el mismo techo.
+ */
+export function buildComplexGalpon(parts: {
+  plantelCodigo: string | null;
+  campania: string | null;
+  galpon: string | null;
+}): string {
+  return [parts.plantelCodigo ?? "", parts.campania ?? "", normGalpon(parts.galpon)].join("-");
+}
+
 /** Recorta el corral de un complex de preventa para obtener su complex de lote. */
 export function complexLoteFromComplex(complex: string | null): string | null {
   if (!complex) return null;

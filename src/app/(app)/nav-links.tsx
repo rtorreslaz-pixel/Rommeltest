@@ -31,8 +31,12 @@ export default function NavLinks({ role }: { role: Role }) {
               { href: "/dashboard-bi/engranaje", label: "Engranaje granja-clientes" },
             ];
 
+  // Resumen por galpón: promedio, CV y uniformidad del pesaje de preventa por complex hasta
+  // galpón. Lo consultan todos los roles que ven pesaje.
+  const conResumen = [...baseLinks, { href: "/resumen-galpon", label: "Resumen por galpón" }];
+
   // Pesaje de saca: muestreo de jabas antes de la saca, comparado contra preventa.
-  const conSaca = [...baseLinks, { href: "/saca", label: "Pesaje de saca" }];
+  const conSaca = [...conResumen, { href: "/saca", label: "Pesaje de saca" }];
 
   // Reporte de apilamiento y ventilación de jabas: lo consultan calidad y jefatura (los
   // verificadores registran desde el enlace público, pero también pueden revisar lo enviado).
