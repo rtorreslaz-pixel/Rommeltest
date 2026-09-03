@@ -67,12 +67,10 @@ function anchosDeColumna(filas: CeldaXlsx[][]): number[] {
   return anchos.map((largo) => Math.min(Math.max(largo + 2, 9), 60));
 }
 
-/**
- * Arma el libro de Excel. La primera fila se trata como encabezado: queda resaltada, se congela
- * al hacer scroll y lleva el filtro automático de Excel.
- */
-export function crearXlsx(filas: CeldaXlsx[][], nombreHoja = "Datos", fecha = new Date()): Buffer {
-  const hoja = nombreHojaSeguro(nombreHoja);
+export type HojaXlsx = { nombre: string; filas: CeldaXlsx[][] };
+
+/** XML de una hoja: encabezado resaltado, congelado al hacer scroll y con autofiltro. */
+function hojaXml(filas: CeldaXlsx[][]): string {
   const numColumnas = filas.reduce((max, f) => Math.max(max, f.length), 0);
   const numFilas = filas.length;
 
@@ -100,7 +98,7 @@ export function crearXlsx(filas: CeldaXlsx[][], nombreHoja = "Datos", fecha = ne
       : "";
   const autoFiltro = numFilas > 1 ? `<autoFilter ref="A1:${ultimaRef}"/>` : "";
 
-  const sheetXml =
+  return (
     `${XML_DECL}<worksheet xmlns="${NS_MAIN}">` +
     `<dimension ref="A1:${ultimaRef}"/>` +
     `<sheetViews><sheetView workbookViewId="0">${panelCongelado}</sheetView></sheetViews>` +
@@ -108,14 +106,38 @@ export function crearXlsx(filas: CeldaXlsx[][], nombreHoja = "Datos", fecha = ne
     cols +
     `<sheetData>${sheetData}</sheetData>` +
     autoFiltro +
-    `</worksheet>`;
+    `</worksheet>`
+  );
+}
+
+/**
+ * Arma el libro de Excel. Acepta una sola tabla (una hoja, [nombreHoja]) o varias hojas con
+ * nombre, para descargas que llevan los datos crudos y un resumen en el mismo archivo. En cada
+ * hoja la primera fila es el encabezado: resaltado, congelado y con filtro automático.
+ */
+export function crearXlsx(
+  entrada: CeldaXlsx[][] | HojaXlsx[],
+  nombreHoja = "Datos",
+  fecha = new Date(),
+): Buffer {
+  const hojas: HojaXlsx[] = esListaDeHojas(entrada) ? entrada : [{ nombre: nombreHoja, filas: entrada }];
+  // Excel exige nombres distintos entre hojas; si dos coinciden tras el recorte, se numeran.
+  const nombres: string[] = [];
+  for (const h of hojas) {
+    let n = nombreHojaSeguro(h.nombre);
+    let k = 2;
+    while (nombres.includes(n)) n = nombreHojaSeguro(`${h.nombre.slice(0, 28)} ${k++}`);
+    nombres.push(n);
+  }
 
   const contentTypes =
     `${XML_DECL}<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">` +
     `<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>` +
     `<Default Extension="xml" ContentType="application/xml"/>` +
     `<Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>` +
-    `<Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>` +
+    hojas
+      .map((_, i) => `<Override PartName="/xl/worksheets/sheet${i + 1}.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>`)
+      .join("") +
     `<Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/>` +
     `</Types>`;
 
@@ -126,13 +148,18 @@ export function crearXlsx(filas: CeldaXlsx[][], nombreHoja = "Datos", fecha = ne
 
   const workbook =
     `${XML_DECL}<workbook xmlns="${NS_MAIN}" xmlns:r="${NS_REL_DOC}">` +
-    `<sheets><sheet name="${xmlEscape(hoja)}" sheetId="1" r:id="rId1"/></sheets>` +
+    `<sheets>` +
+    nombres.map((n, i) => `<sheet name="${xmlEscape(n)}" sheetId="${i + 1}" r:id="rId${i + 1}"/>`).join("") +
+    `</sheets>` +
     `</workbook>`;
 
+  // Las hojas ocupan rId1..rIdN; los estilos van después.
   const workbookRels =
     `${XML_DECL}<Relationships xmlns="${NS_REL_PKG}">` +
-    `<Relationship Id="rId1" Type="${NS_REL_DOC}/worksheet" Target="worksheets/sheet1.xml"/>` +
-    `<Relationship Id="rId2" Type="${NS_REL_DOC}/styles" Target="styles.xml"/>` +
+    hojas
+      .map((_, i) => `<Relationship Id="rId${i + 1}" Type="${NS_REL_DOC}/worksheet" Target="worksheets/sheet${i + 1}.xml"/>`)
+      .join("") +
+    `<Relationship Id="rId${hojas.length + 1}" Type="${NS_REL_DOC}/styles" Target="styles.xml"/>` +
     `</Relationships>`;
 
   // Estilos: el índice 0 es el normal y el 1 el del encabezado (negrita sobre fondo oscuro).
@@ -165,8 +192,16 @@ export function crearXlsx(filas: CeldaXlsx[][], nombreHoja = "Datos", fecha = ne
       { nombre: "xl/workbook.xml", contenido: Buffer.from(workbook, "utf8") },
       { nombre: "xl/_rels/workbook.xml.rels", contenido: Buffer.from(workbookRels, "utf8") },
       { nombre: "xl/styles.xml", contenido: Buffer.from(styles, "utf8") },
-      { nombre: "xl/worksheets/sheet1.xml", contenido: Buffer.from(sheetXml, "utf8") },
+      ...hojas.map((h, i) => ({
+        nombre: `xl/worksheets/sheet${i + 1}.xml`,
+        contenido: Buffer.from(hojaXml(h.filas), "utf8"),
+      })),
     ],
     fecha,
   );
+}
+
+function esListaDeHojas(entrada: CeldaXlsx[][] | HojaXlsx[]): entrada is HojaXlsx[] {
+  const primera = entrada[0];
+  return primera !== undefined && !Array.isArray(primera) && typeof primera === "object" && primera !== null && "filas" in primera;
 }

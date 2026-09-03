@@ -64,7 +64,9 @@ calidad del pollo en el cliente + pesaje preventa en granja. Omnicanal:
   `src/lib/estadisticas-peso.ts` (puro, verificado contra `statistics` de Python). Las pesadas de varias
   aves juntas (`nAvesPorPesada > 1`) entran al promedio ponderado pero **no** a desviación/CV/uniformidad
   (promediar antes achica la dispersión); se muestran aparte como "en grupo". Un galpón con dos sexos
-  muestra además el desglose por sexo. Excel/CSV en `/api/resumen-galpon/export`.
+  muestra además el desglose por sexo. Excel/CSV en `/api/resumen-galpon/export`. **El Excel de la toma
+  de muestras lleva este resumen como segunda pestaña** (mismos filtros), y el generador `crearXlsx`
+  acepta varias hojas con nombre (`HojaXlsx[]`); el CSV sigue siendo una sola tabla.
 - **Descarga en Excel**: los botones de la web piden `?formato=xlsx` y reciben un `.xlsx` real
   (`src/lib/xlsx.ts`, un ZIP con los XML de OOXML armado con el mismo `crearZip` de la evidencia;
   sin dependencias nuevas). El **CSV sigue siendo el predeterminado** del endpoint para no romper

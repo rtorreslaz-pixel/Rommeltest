@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { prisma } from "@/lib/db";
 import { resolveExportUser, tablaResponse } from "@/lib/export-csv";
 import type { Prisma } from "@/generated/prisma/client";
+import { construirResumenGalpones, filasResumenGalpones, leerFiltrosResumen } from "@/lib/resumen-galpon";
 
 // Descarga de la "base de datos de la toma de muestras": todos los registros de peso
 // de preventa que la app Android sincroniza (RegistroPesoPreventa). Un VERIFICADOR
@@ -125,5 +126,17 @@ export async function GET(request: NextRequest) {
   ]);
 
   const rows: (string | number)[][] = [headers, ...dataRows];
-  return tablaResponse(rows, "toma-muestras", searchParams, "Toma de muestras");
+
+  // En Excel va una segunda pestaña con el resumen por galpón (promedio, CV, uniformidad) de
+  // los MISMOS registros: mismos filtros de fecha y plantel, misma restricción por verificador.
+  const filtrosResumen = leerFiltrosResumen({
+    desde: desde ?? undefined,
+    hasta: hasta ?? undefined,
+    plantel: searchParams.get("plantelId") ?? undefined,
+    tolerancia: searchParams.get("tolerancia") ?? undefined,
+  });
+  const galpones = await construirResumenGalpones(user, filtrosResumen);
+  const hojaResumen = { nombre: "Resumen por galpon", filas: filasResumenGalpones(galpones, filtrosResumen.tolerancia) };
+
+  return tablaResponse(rows, "toma-muestras", searchParams, "Toma de muestras", [hojaResumen]);
 }

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { redirect } from "next/navigation";
 import { timingSafeEqual } from "crypto";
 import { getCurrentUser, type SessionUser } from "@/lib/auth";
-import { crearXlsx } from "@/lib/xlsx";
+import { crearXlsx, type HojaXlsx } from "@/lib/xlsx";
 import type { Prisma } from "@/generated/prisma/client";
 
 export function csvEscape(value: string | number | null | undefined): string {
@@ -71,9 +71,14 @@ const XLSX_MIME = "application/vnd.openxmlformats-officedocument.spreadsheetml.s
 export function xlsxResponse(
   rows: (string | number)[][],
   filenamePrefix: string,
-  nombreHoja?: string
+  nombreHoja?: string,
+  hojasExtra: HojaXlsx[] = []
 ): NextResponse {
-  const libro = crearXlsx(rows, nombreHoja ?? filenamePrefix);
+  // Con hojas extra (p. ej. un resumen junto a los datos crudos) el libro lleva varias pestañas.
+  const libro =
+    hojasExtra.length > 0
+      ? crearXlsx([{ nombre: nombreHoja ?? filenamePrefix, filas: rows }, ...hojasExtra])
+      : crearXlsx(rows, nombreHoja ?? filenamePrefix);
   return new NextResponse(new Uint8Array(libro), {
     headers: {
       "Content-Type": XLSX_MIME,
@@ -92,11 +97,13 @@ export function tablaResponse(
   rows: (string | number)[][],
   filenamePrefix: string,
   searchParams: URLSearchParams,
-  nombreHoja?: string
+  nombreHoja?: string,
+  hojasExtra: HojaXlsx[] = []
 ): NextResponse {
   const formato = (searchParams.get("formato") ?? "").toLowerCase();
   if (formato === "xlsx" || formato === "excel") {
-    return xlsxResponse(rows, filenamePrefix, nombreHoja);
+    return xlsxResponse(rows, filenamePrefix, nombreHoja, hojasExtra);
   }
+  // El CSV no tiene pestañas: lleva solo la tabla principal.
   return csvResponse(rows, filenamePrefix);
 }
