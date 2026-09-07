@@ -27,7 +27,7 @@ import java.util.TimeZone
 /**
  * Plan del día: la lista de corrales que el verificador se propuso muestrear hoy, con su avance.
  * Tocar una fila pendiente abre la configuración de captura ya llena con esos datos; al finalizar
- * ese muestreo la fila pasa a HECHO. Mantener pulsada una fila pendiente la quita del plan.
+ * ese muestreo la fila pasa a HECHO. Mantener pulsada una fila pendiente permite editarla o quitarla.
  */
 class PlanDiaFragment : Fragment() {
 
@@ -117,12 +117,37 @@ class PlanDiaFragment : Fragment() {
                     )
                 }
                 fila.root.setOnLongClickListener {
-                    confirmarQuitar(item)
+                    opciones(item)
                     true
                 }
             }
             b.containerPlan.addView(fila.root)
         }
+    }
+
+    /** Mantener pulsado un corral pendiente: pesar, editar sus datos o quitarlo. */
+    private fun opciones(item: PlanItem) {
+        val acciones = arrayOf(
+            getString(R.string.plan_opcion_pesar),
+            getString(R.string.plan_opcion_editar),
+            getString(R.string.plan_opcion_quitar),
+        )
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(getString(R.string.plan_opciones_titulo, item.corral, item.plantelCodigo, item.galpon))
+            .setItems(acciones) { _, cual ->
+                when (cual) {
+                    0 -> findNavController().navigate(
+                        R.id.action_planDia_to_captureSetup,
+                        bundleOf(CaptureSetupFragment.ARG_PLAN_ITEM_ID to item.id),
+                    )
+                    1 -> findNavController().navigate(
+                        R.id.action_planDia_to_planItem,
+                        bundleOf(PlanItemFragment.ARG_PLAN_EDIT_ID to item.id),
+                    )
+                    else -> confirmarQuitar(item)
+                }
+            }
+            .show()
     }
 
     private fun confirmarQuitar(item: PlanItem) {

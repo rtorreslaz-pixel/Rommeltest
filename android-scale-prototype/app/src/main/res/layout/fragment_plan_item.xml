@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Agregar corrales al plan: se define el lote una vez y se marcan los corrales. -->
+<!-- Agregar o editar UN corral del plan, con sus propios datos (sexo, edad, tipo, línea, lote…). -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -13,6 +13,7 @@
         android:padding="16dp">
 
         <TextView
+            android:id="@+id/textPlanItemTitulo"
             style="@style/SfSectionTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -60,51 +61,22 @@
             style="@style/SfFieldLabel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/label_corrales_plan" />
+            android:text="@string/label_corral" />
 
-        <LinearLayout
+        <!-- Cada corral se agrega con SUS datos (sexo, edad, lote…): un galpón puede tener
+             hembras en A y machos en B, o un corral con otra línea. -->
+        <Spinner
+            android:id="@+id/spinnerPlanCorral"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <CheckBox
-                android:id="@+id/checkPlanCorralA"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:checked="true"
-                android:text="A" />
-
-            <CheckBox
-                android:id="@+id/checkPlanCorralB"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:checked="true"
-                android:text="B" />
-
-            <CheckBox
-                android:id="@+id/checkPlanCorralC"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:checked="true"
-                android:text="C" />
-
-            <CheckBox
-                android:id="@+id/checkPlanCorralD"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:checked="true"
-                android:text="D" />
-        </LinearLayout>
+            android:layout_marginBottom="8dp" />
 
         <EditText
             android:id="@+id/editPlanCorralOtro"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/plan_corral_otro_hint"
+            android:hint="@string/label_corral_otro"
+            android:visibility="gone"
             android:layout_marginBottom="12dp" />
 
         <TextView
@@ -293,10 +265,18 @@
         </RadioGroup>
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/buttonGuardarPlan"
+            android:id="@+id/buttonGuardarSeguir"
             style="@style/SfButtonPrimary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:text="@string/plan_guardar_seguir" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/buttonGuardarPlan"
+            style="@style/SfButtonGhost"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             android:text="@string/plan_guardar" />
 
         <TextView

@@ -162,7 +162,15 @@
 
     <!-- Plan del día -->
     <string name="title_plan_dia">Plan del día — preventa / calidad</string>
-    <string name="title_plan_item">Agregar corrales al plan</string>
+    <string name="title_plan_item">Agregar corral al plan</string>
+    <string name="title_plan_item_editar">Editar corral del plan</string>
+    <string name="plan_guardar_seguir">Agregar y siguiente corral</string>
+    <string name="plan_guardar_editar">Guardar cambios</string>
+    <string name="plan_opciones_titulo">Corral %1$s · %2$s galpón %3$s</string>
+    <string name="plan_opcion_pesar">Ir a pesar</string>
+    <string name="plan_opcion_editar">Editar datos</string>
+    <string name="plan_opcion_quitar">Quitar del plan</string>
+    <string name="plan_corral_agregado">Corral %1$s agregado. Sigue con el %2$s.</string>
     <string name="home_preventa_sin_plan">Pesar preventa / calidad sin plan</string>
     <string name="home_plan">Plan del día · preventa / calidad</string>
     <string name="home_plan_desc">Arma los corrales de preventa / calidad que vas a muestrear hoy y ve cumpliéndolos uno por uno.</string>
@@ -182,16 +190,10 @@
     <string name="plan_individual">Individual</string>
     <string name="plan_estado_hecho">Hecho</string>
     <string name="plan_estado_pendiente">Pendiente</string>
-    <string name="plan_tocar_hint">Toca un corral pendiente para ir a pesarlo. Mantén pulsado para quitarlo del plan.</string>
+    <string name="plan_tocar_hint">Toca un corral pendiente para ir a pesarlo. Mantén pulsado para editarlo o quitarlo.</string>
     <string name="plan_quitar_titulo">Quitar del plan</string>
     <string name="plan_quitar_mensaje">¿Quitar el corral %1$s (%2$s, galpón %3$s) del plan de hoy?</string>
     <string name="plan_quitar_confirmar">Quitar</string>
-    <plurals name="plan_agregados">
-        <item quantity="one">%1$d corral agregado al plan</item>
-        <item quantity="other">%1$d corrales agregados al plan</item>
-    </plurals>
-    <string name="label_corrales_plan">Corrales a muestrear</string>
-    <string name="plan_corral_otro_hint">Otro corral (opcional)</string>
     <string name="label_agrupamiento">Agrupamiento</string>
     <string name="label_circuito">Circuito</string>
     <string name="plan_circuito_ninguno">—</string>

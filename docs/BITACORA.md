@@ -96,8 +96,10 @@ calidad del pollo en el cliente + pesaje preventa en granja. Omnicanal:
   Bröring, re-emparejar y reintentar.
 - Offline: cola local (Room `scale-prototype.db`), sync por lotes, alertas de pendientes y de atribución (otro usuario).
 - **Plan del día — solo preventa / calidad** (app + web; la saca no lleva plan): el verificador arma en la app, antes de salir, la lista de corrales
-  que va a muestrear (plantel, campaña, galpón, corrales A–D, sexo, edad, tipo, línea, lote,
-  agrupamiento INDIVIDUAL/GRUPAL, circuito CV vivo / CB beneficiado). **Estándar** (`EstandaresMuestreo`):
+  que va a muestrear, **corral por corral y cada uno con sus propios datos** (plantel, campaña, galpón,
+  corral, sexo, edad, tipo, línea, lote, agrupamiento INDIVIDUAL/GRUPAL, circuito CV vivo / CB beneficiado);
+  "Agregar y siguiente" arrastra los valores al corral siguiente como propuesta, y cualquier fila
+  pendiente se puede editar desde la lista. **Estándar** (`EstandaresMuestreo`):
   preventa de a 1 ave (individual), calidad de a 3 aves (grupal); la app lo propone al elegir el tipo y
   sigue editable. Tocar una fila abre la
   configuración de captura ya llena. **Cumplimiento automático**: la fila pasa a HECHO cuando llega

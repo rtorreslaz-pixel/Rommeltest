@@ -25,6 +25,10 @@ interface PlanDao {
     @Query("SELECT COALESCE(MAX(orden), 0) FROM plan_item WHERE fecha = :fecha")
     suspend fun maxOrden(fecha: String): Int
 
+    /** La última fila agregada hoy: sus valores se proponen para el siguiente corral. */
+    @Query("SELECT * FROM plan_item WHERE fecha = :fecha AND borrado = 0 ORDER BY orden DESC, createdAtEpochMillis DESC LIMIT 1")
+    suspend fun getUltimoDelDia(fecha: String): PlanItem?
+
     /** Cumplimiento local inmediato: al finalizar el muestreo que salió de esta fila. */
     @Query("UPDATE plan_item SET estado = 'HECHO' WHERE id = :id")
     suspend fun marcarHecho(id: String)
