@@ -30,6 +30,8 @@ export type PlanItemInput = {
   linea?: string | null;
   lote?: string | null;
   agrupamiento?: AgrupamientoMuestreo | null;
+  /** Aves por pesada cuando es GRUPAL (1-20); null = individual. */
+  avesPorPesada?: number | null;
   circuito?: CircuitoMuestreo | null;
   orden?: number | null;
 };
@@ -66,6 +68,8 @@ export function isValidPlanItem(r: unknown): r is PlanItemInput {
     esTextoOpcional(v.linea) &&
     esTextoOpcional(v.lote) &&
     esEnumOpcional(v.agrupamiento, Object.values(AgrupamientoMuestreo)) &&
+    (v.avesPorPesada === undefined || v.avesPorPesada === null ||
+      (typeof v.avesPorPesada === "number" && Number.isInteger(v.avesPorPesada) && v.avesPorPesada >= 1 && v.avesPorPesada <= 20)) &&
     esEnumOpcional(v.circuito, Object.values(CircuitoMuestreo)) &&
     (v.orden === undefined || v.orden === null || (typeof v.orden === "number" && Number.isInteger(v.orden)))
   );

@@ -228,6 +228,27 @@
                 android:text="@string/plan_grupal" />
         </RadioGroup>
 
+        <!-- Solo en grupal: cuántas aves van juntas en cada pesada (estándar: 3 en calidad). -->
+        <LinearLayout
+            android:id="@+id/layoutPlanAvesPesada"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                style="@style/SfFieldLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/label_n_aves_pesada" />
+
+            <Spinner
+                android:id="@+id/spinnerPlanAvesPesada"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp" />
+        </LinearLayout>
+
         <TextView
             style="@style/SfFieldLabel"
             android:layout_width="match_parent"

@@ -31,6 +31,8 @@ data class PlanItem(
     val lote: String?,
     /** INDIVIDUAL / GRUPAL. */
     val agrupamiento: String,
+    /** Aves que van juntas en cada pesada cuando es GRUPAL; null = individual. */
+    val avesPorPesada: Int? = null,
     /** CV (vivo) / CB (beneficiado), o null. */
     val circuito: String?,
     val orden: Int,

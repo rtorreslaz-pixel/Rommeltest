@@ -57,6 +57,16 @@ class PlanItemFragment : Fragment() {
             android.R.layout.simple_spinner_dropdown_item,
             CaptureSetupFragment.LINEAS_GENETICAS,
         )
+        b.spinnerPlanAvesPesada.adapter = ArrayAdapter(
+            requireContext(),
+            android.R.layout.simple_spinner_dropdown_item,
+            (1..AVES_POR_PESADA_MAX).toList(),
+        )
+        b.spinnerPlanAvesPesada.setSelection(EstandaresMuestreo.AVES_POR_PESADA_CALIDAD - 1)
+        // El número de aves solo aplica en grupal: se muestra al elegirlo.
+        b.radioGroupPlanAgrupamiento.setOnCheckedChangeListener { _, checkedId ->
+            binding?.layoutPlanAvesPesada?.visibility = if (checkedId == R.id.radioPlanGrupal) View.VISIBLE else View.GONE
+        }
         b.spinnerPlanCorral.adapter = ArrayAdapter(
             requireContext(),
             android.R.layout.simple_spinner_dropdown_item,
@@ -156,6 +166,8 @@ class PlanItemFragment : Fragment() {
         // El agrupamiento se fija después del tipo: el listener del tipo pone el estándar y aquí
         // se respeta lo que tenía la fila.
         b.radioGroupPlanAgrupamiento.check(if (item.agrupamiento == "GRUPAL") R.id.radioPlanGrupal else R.id.radioPlanIndividual)
+        b.layoutPlanAvesPesada.visibility = if (item.agrupamiento == "GRUPAL") View.VISIBLE else View.GONE
+        item.avesPorPesada?.let { b.spinnerPlanAvesPesada.setSelection((it - 1).coerceIn(0, AVES_POR_PESADA_MAX - 1)) }
         b.radioGroupPlanCircuito.check(
             when (item.circuito) {
                 "CV" -> R.id.radioPlanCircuitoCV
@@ -216,6 +228,7 @@ class PlanItemFragment : Fragment() {
         val linea = CaptureSetupFragment.LINEAS_GENETICAS.getOrNull(b.spinnerPlanLinea.selectedItemPosition)
         val lote = if (b.radioGroupPlanLote.checkedRadioButtonId == R.id.radioPlanLoteA) "A" else "J"
         val agrupamiento = if (b.radioGroupPlanAgrupamiento.checkedRadioButtonId == R.id.radioPlanGrupal) "GRUPAL" else "INDIVIDUAL"
+        val avesPorPesada = if (agrupamiento == "GRUPAL") b.spinnerPlanAvesPesada.selectedItemPosition + 1 else null
         val circuito = when (b.radioGroupPlanCircuito.checkedRadioButtonId) {
             R.id.radioPlanCircuitoCV -> "CV"
             R.id.radioPlanCircuitoCB -> "CB"
@@ -241,6 +254,7 @@ class PlanItemFragment : Fragment() {
                 linea = linea,
                 lote = lote,
                 agrupamiento = agrupamiento,
+                avesPorPesada = avesPorPesada,
                 circuito = circuito,
                 orden = existente?.orden ?: (dao.maxOrden(hoy) + 1),
                 estado = existente?.estado ?: PlanItem.ESTADO_PENDIENTE,
@@ -279,5 +293,7 @@ class PlanItemFragment : Fragment() {
 
     companion object {
         const val ARG_PLAN_EDIT_ID = "planEditId"
+        /** Mismo tope que el selector de la configuración de captura. */
+        const val AVES_POR_PESADA_MAX = 10
     }
 }

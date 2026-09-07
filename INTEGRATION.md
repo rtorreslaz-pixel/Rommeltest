@@ -186,7 +186,7 @@ mayúsculas), sexo y tipo de muestreo. El cruce se hace en ambos órdenes de lle
     "id": "uuid", "fecha": "2026-09-07", "plantelId": "...", "campania": "2026",
     "galpon": "1", "corral": "A", "categoria": "HEMBRA", "edad": 35,
     "tipoMuestreo": "PREVENTA", "linea": "ROSS", "lote": "J",
-    "agrupamiento": "GRUPAL", "circuito": "CV", "orden": 1
+    "agrupamiento": "GRUPAL", "avesPorPesada": 3, "circuito": "CV", "orden": 1
   }],
   "borrar": ["uuid-de-fila-pendiente"]
 }
@@ -195,6 +195,8 @@ mayúsculas), sexo y tipo de muestreo. El cruce se hace en ambos órdenes de lle
 Respuesta: `{ "ingested": 1, "cumplidos": 0, "items": [{ "id": "uuid", "estado": "PENDIENTE" }] }`.
 `403` si alguna fila pertenece a otro verificador. Enums: `agrupamiento` INDIVIDUAL|GRUPAL,
 `circuito` CV (vivo)|CB (beneficiado), `tipoMuestreo` PREVENTA|CALIDAD, `estado` PENDIENTE|HECHO.
+`avesPorPesada` (1-20) solo aplica en GRUPAL: cuántas aves van juntas en cada pesada; en
+INDIVIDUAL el servidor lo guarda null.
 
 **GET** `?fecha=yyyy-MM-dd` (hoy por defecto): las filas del verificador ese día con
 `plantelCodigo`, `estado` y `cumplidoEn`, en el orden del plan. La app la usa para refrescar el
@@ -217,7 +219,7 @@ opcionales por ave (`tieneHematoma?`, `tieneDefectoSeleccion?`, `gradoPododermat
 
 Fila del plan diario (ver endpoint `plan`): `verificadorId`, `fecha` (texto `yyyy-MM-dd`),
 `plantelId`, `campania`, `galpon`, `corral`, `categoria`, `edad`, `tipoMuestreo`, `linea`, `lote`,
-`agrupamiento`, `circuito`, `orden`, `estado`, `cumplidoEn`, `complex`. En la app es la tabla
+`agrupamiento`, `avesPorPesada`, `circuito`, `orden`, `estado`, `cumplidoEn`, `complex`. En la app es la tabla
 Room `plan_item` (v9), con `synced` y `borrado` para su cola de sincronización.
 
 ### `PesoEstandar`

@@ -9,7 +9,7 @@ import androidx.room.migration.Migration
 
 @Database(
     entities = [RegistroPeso::class, SacaMuestreo::class, SacaPesada::class, PlanItem::class],
-    version = 9,
+    version = 10,
     exportSchema = true,
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -117,6 +117,13 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        // Aves por pesada en el plan (solo grupal). Columna nueva y opcional.
+        private val MIGRATION_9_10 = object : Migration(9, 10) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE plan_item ADD COLUMN avesPorPesada INTEGER")
+            }
+        }
+
         fun getInstance(context: Context): AppDatabase {
             return instance ?: synchronized(this) {
                 instance ?: Room.databaseBuilder(
@@ -126,7 +133,7 @@ abstract class AppDatabase : RoomDatabase() {
                     // Sin fallbackToDestructiveMigration(): un futuro cambio de esquema
                     // debe ir por una Migration real, no borrar la cola de un verificador.
                 ).addMigrations(
-                    MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9,
+                    MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9, MIGRATION_9_10,
                 )
                     .build().also { instance = it }
             }

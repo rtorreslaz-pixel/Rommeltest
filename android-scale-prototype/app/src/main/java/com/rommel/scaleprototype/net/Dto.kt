@@ -120,6 +120,7 @@ data class PlanItemDto(
     val linea: String? = null,
     val lote: String? = null,
     val agrupamiento: String? = null,
+    val avesPorPesada: Int? = null,
     val circuito: String? = null,
     val orden: Int? = null,
     // Solo vienen del servidor (GET): la app no los manda.

@@ -187,6 +187,7 @@
     <string name="plan_item_edad_format">%1$d d</string>
     <string name="plan_item_lote_letra_format">Lote %1$s</string>
     <string name="plan_grupal">Grupal</string>
+    <string name="plan_grupal_aves_format">Grupal · %1$d aves</string>
     <string name="plan_individual">Individual</string>
     <string name="plan_estado_hecho">Hecho</string>
     <string name="plan_estado_pendiente">Pendiente</string>

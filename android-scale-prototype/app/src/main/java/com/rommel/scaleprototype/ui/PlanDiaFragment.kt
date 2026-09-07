@@ -100,7 +100,11 @@ class PlanDiaFragment : Fragment() {
                 item.edad?.let { getString(R.string.plan_item_edad_format, it) },
                 item.linea,
                 item.lote?.let { getString(R.string.plan_item_lote_letra_format, it) },
-                if (item.agrupamiento == "GRUPAL") getString(R.string.plan_grupal) else getString(R.string.plan_individual),
+                if (item.agrupamiento == "GRUPAL") {
+                    item.avesPorPesada?.let { getString(R.string.plan_grupal_aves_format, it) } ?: getString(R.string.plan_grupal)
+                } else {
+                    getString(R.string.plan_individual)
+                },
                 item.circuito,
             ).joinToString(" · ")
             fila.textPlanEstado.text = getString(if (hecho) R.string.plan_estado_hecho else R.string.plan_estado_pendiente)

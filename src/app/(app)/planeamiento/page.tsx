@@ -145,6 +145,7 @@ export default async function PlaneamientoPage({
                 <th className="px-3 py-2.5 font-medium">Línea</th>
                 <th className="px-3 py-2.5 font-medium">Lote</th>
                 <th className="px-3 py-2.5 font-medium">Agrupamiento</th>
+                <th className="px-3 py-2.5 font-medium">Aves/pesada</th>
                 <th className="px-3 py-2.5 font-medium">Circuito</th>
                 <th className="px-3 py-2.5 font-medium">Estado</th>
               </tr>
@@ -164,6 +165,7 @@ export default async function PlaneamientoPage({
                   <td className="px-3 py-2">{i.linea ?? "—"}</td>
                   <td className="px-3 py-2">{i.lote ?? "—"}</td>
                   <td className="px-3 py-2">{AGRUPAMIENTO_LABEL[i.agrupamiento]}</td>
+                  <td className="px-3 py-2">{i.agrupamiento === "GRUPAL" ? (i.avesPorPesada ?? "—") : 1}</td>
                   <td className="px-3 py-2">{i.circuito ? CIRCUITO_LABEL[i.circuito] : "—"}</td>
                   <td className="px-3 py-2">
                     <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${i.estado === "HECHO" ? "bg-green-100 text-green-800" : "bg-amber-100 text-amber-800"}`}>

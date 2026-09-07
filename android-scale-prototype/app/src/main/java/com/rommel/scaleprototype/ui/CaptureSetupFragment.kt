@@ -170,6 +170,8 @@ class CaptureSetupFragment : Fragment() {
             // en un pesaje de preventa (fuera de estándar), se propone la última cantidad usada.
             val nAves = when {
                 item.agrupamiento != "GRUPAL" -> EstandaresMuestreo.AVES_POR_PESADA_PREVENTA
+                // El plan dice cuántas aves van juntas; si no lo trae, el estándar.
+                item.avesPorPesada != null -> item.avesPorPesada
                 item.tipoMuestreo == EstandaresMuestreo.TIPO_CALIDAD -> EstandaresMuestreo.AVES_POR_PESADA_CALIDAD
                 else -> {
                     val cfg = ConfiguracionMuestreoStore.leer(requireContext(), AuthRepository(requireContext()).getVerificadorId())

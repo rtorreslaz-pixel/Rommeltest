@@ -64,6 +64,8 @@ export async function POST(request: NextRequest) {
           linea: i.linea ?? null,
           lote: i.lote ?? null,
           agrupamiento: i.agrupamiento ?? AgrupamientoMuestreo.INDIVIDUAL,
+          // Solo tiene sentido en grupal; en individual se guarda null aunque venga un número.
+          avesPorPesada: (i.agrupamiento ?? AgrupamientoMuestreo.INDIVIDUAL) === AgrupamientoMuestreo.GRUPAL ? (i.avesPorPesada ?? null) : null,
           circuito: i.circuito ?? null,
           orden: i.orden ?? 0,
           complex: complexDePlan(codigoPorPlantel.get(i.plantelId) ?? "", i),
@@ -123,6 +125,7 @@ export async function GET(request: NextRequest) {
       linea: i.linea,
       lote: i.lote,
       agrupamiento: i.agrupamiento,
+      avesPorPesada: i.avesPorPesada,
       circuito: i.circuito,
       orden: i.orden,
       estado: i.estado,

@@ -667,6 +667,8 @@ model PlanMuestreoItem {
   linea        String?
   lote         String?
   agrupamiento AgrupamientoMuestreo @default(INDIVIDUAL)
+  // Cuántas aves van juntas en cada pesada cuando el agrupamiento es GRUPAL (null = individual).
+  avesPorPesada Int?
   circuito     CircuitoMuestreo?
   // Orden dentro del día, para listar el plan como lo armó el verificador.
   orden Int @default(0)

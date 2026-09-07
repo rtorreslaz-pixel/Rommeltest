@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
 
   const headers = [
     "FECHA", "VERIFICADOR", "PLANTEL", "CAMPAÑA", "GALPON", "CORRAL", "SEXO", "EDAD", "TIPO DE MUESTREO",
-    "LINEA", "LOTE", "AGRUPAMIENTO", "CIRCUITO", "ESTADO", "CUMPLIDO EN", "COMPLEX",
+    "LINEA", "LOTE", "AGRUPAMIENTO", "AVES POR PESADA", "CIRCUITO", "ESTADO", "CUMPLIDO EN", "COMPLEX",
   ];
   const rows: (string | number)[][] = [
     headers,
@@ -48,6 +48,7 @@ export async function GET(request: NextRequest) {
       i.linea ?? "",
       i.lote ?? "",
       AGRUPAMIENTO_LABEL[i.agrupamiento],
+      i.agrupamiento === "GRUPAL" ? (i.avesPorPesada ?? "") : 1,
       i.circuito ?? "",
       ESTADO_PLAN_LABEL[i.estado].toUpperCase(),
       i.cumplidoEn ? i.cumplidoEn.toISOString().replace("T", " ").slice(0, 19) : "",

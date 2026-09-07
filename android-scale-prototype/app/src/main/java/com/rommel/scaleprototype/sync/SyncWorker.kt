@@ -115,6 +115,7 @@ class SyncWorker(context: Context, params: WorkerParameters) : CoroutineWorker(c
             linea = linea,
             lote = lote,
             agrupamiento = agrupamiento,
+            avesPorPesada = avesPorPesada,
             circuito = circuito,
             orden = orden,
         )
