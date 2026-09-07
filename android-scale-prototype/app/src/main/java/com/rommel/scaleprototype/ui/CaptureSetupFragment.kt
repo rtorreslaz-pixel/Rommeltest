@@ -79,6 +79,12 @@ class CaptureSetupFragment : Fragment() {
      */
     private fun restaurarUltimaConfiguracion() {
         val b = binding ?: return
+        // Si se llegó desde el plan del día, manda la fila del plan: no hay nada que recordar.
+        val planItemId = arguments?.getString(ARG_PLAN_ITEM_ID)
+        if (planItemId != null) {
+            llenarDesdePlan(planItemId)
+            return
+        }
         val verificadorId = AuthRepository(requireContext()).getVerificadorId()
         val cfg = ConfiguracionMuestreoStore.leer(requireContext(), verificadorId) ?: return
 
@@ -121,6 +127,48 @@ class CaptureSetupFragment : Fragment() {
         b.radioGroupModo.check(if (cfg.soloCalidad) R.id.radioModoCalidad else R.id.radioModoPesaje)
 
         mostrarCorralesYaMuestreados(cfg)
+    }
+
+    /**
+     * La fila del plan trae todo el lote: solo queda confirmar (o ajustar las aves por pesada,
+     * que el plan define como individual/grupal pero no cuántas).
+     */
+    private fun llenarDesdePlan(planItemId: String) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            val item = AppDatabase.getInstance(requireContext()).planDao().getItem(planItemId) ?: return@launch
+            val b = binding ?: return@launch
+            val iPlantel = planteles.indexOfFirst { it.id == item.plantelId }
+            if (iPlantel >= 0) b.spinnerPlantel.setSelection(iPlantel)
+            b.editCampania.setText(item.campania)
+            b.editGalpon.setText(item.galpon)
+            val iCorral = ConfiguracionMuestreoStore.CORRALES.indexOf(item.corral.uppercase())
+            if (iCorral >= 0) {
+                b.spinnerCorral.setSelection(iCorral)
+            } else {
+                b.spinnerCorral.setSelection(ConfiguracionMuestreoStore.CORRALES.size)
+                b.editCorralOtro.setText(item.corral)
+            }
+            b.radioGroupCategoria.check(
+                when (item.categoria) {
+                    "HEMBRA" -> R.id.radioHembra
+                    "MEDIANO" -> R.id.radioMediano
+                    else -> R.id.radioMacho
+                }
+            )
+            item.edad?.let { b.editEdad.setText(it.toString()) }
+            val iLinea = LINEAS_GENETICAS.indexOf(item.linea)
+            if (iLinea >= 0) b.spinnerLinea.setSelection(iLinea)
+            b.radioGroupLote.check(if (item.lote == "A") R.id.radioLoteA else R.id.radioLoteJ)
+            b.radioGroupModo.check(if (item.tipoMuestreo == "CALIDAD") R.id.radioModoCalidad else R.id.radioModoPesaje)
+            // Grupal: se propone la última cantidad usada (o 5 si nunca se pesó en grupo).
+            val nAves = if (item.agrupamiento == "GRUPAL") {
+                val cfg = ConfiguracionMuestreoStore.leer(requireContext(), AuthRepository(requireContext()).getVerificadorId())
+                cfg?.nAvesPorPesada?.takeIf { it > 1 } ?: 5
+            } else {
+                1
+            }
+            b.spinnerNAvesPesada.setSelection((nAves - 1).coerceIn(0, 9))
+        }
     }
 
     /** "Hoy ya muestreaste: A, B" — para no repetir un corral ni saltarse otro. */
@@ -291,6 +339,8 @@ class CaptureSetupFragment : Fragment() {
                 ARG_LOTE to lote,
                 ARG_N_AVES_PESADA to nAvesPorPesada,
                 ARG_SOLO_CALIDAD to soloCalidad,
+                // Si el muestreo salió del plan, Captura marca la fila como hecha al finalizar.
+                ARG_PLAN_ITEM_ID to arguments?.getString(ARG_PLAN_ITEM_ID),
             ),
         )
     }
@@ -347,6 +397,7 @@ class CaptureSetupFragment : Fragment() {
         const val ARG_LOTE = "lote"
         const val ARG_N_AVES_PESADA = "nAvesPorPesada"
         const val ARG_SOLO_CALIDAD = "soloCalidad"
+        const val ARG_PLAN_ITEM_ID = "planItemId"
 
         /** Líneas genéticas disponibles (desplegable). Se guarda el texto tal cual en el registro. */
         val LINEAS_GENETICAS = listOf("ROSS", "COBB")

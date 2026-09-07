@@ -33,7 +33,12 @@ export default function NavLinks({ role }: { role: Role }) {
 
   // Resumen por galpón: promedio, CV y uniformidad del pesaje de preventa por complex hasta
   // galpón. Lo consultan todos los roles que ven pesaje.
-  const conResumen = [...baseLinks, { href: "/resumen-galpon", label: "Resumen por galpón" }];
+  const conResumen = [
+    ...baseLinks,
+    // Plan diario de muestreo que arma el verificador en la app, con su cumplimiento.
+    { href: "/planeamiento", label: "Planeamiento" },
+    { href: "/resumen-galpon", label: "Resumen por galpón" },
+  ];
 
   // Pesaje de saca: muestreo de jabas antes de la saca, comparado contra preventa.
   const conSaca = [...conResumen, { href: "/saca", label: "Pesaje de saca" }];

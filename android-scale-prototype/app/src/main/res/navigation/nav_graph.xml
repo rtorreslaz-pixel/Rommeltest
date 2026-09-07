@@ -25,7 +25,27 @@
         <action
             android:id="@+id/action_home_to_sacaSetup"
             app:destination="@id/sacaSetupFragment" />
+        <action
+            android:id="@+id/action_home_to_planDia"
+            app:destination="@id/planDiaFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/planDiaFragment"
+        android:name="com.rommel.scaleprototype.ui.PlanDiaFragment"
+        android:label="@string/title_plan_dia">
+        <action
+            android:id="@+id/action_planDia_to_planItem"
+            app:destination="@id/planItemFragment" />
+        <action
+            android:id="@+id/action_planDia_to_captureSetup"
+            app:destination="@id/captureSetupFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/planItemFragment"
+        android:name="com.rommel.scaleprototype.ui.PlanItemFragment"
+        android:label="@string/title_plan_item" />
 
     <fragment
         android:id="@+id/sacaSetupFragment"
@@ -79,6 +99,11 @@
         <action
             android:id="@+id/action_capture_to_muestreos"
             app:destination="@id/muestreosDiaFragment" />
+        <action
+            android:id="@+id/action_capture_to_planDia"
+            app:destination="@id/planDiaFragment"
+            app:popUpTo="@id/planDiaFragment"
+            app:popUpToInclusive="true" />
         <action
             android:id="@+id/action_capture_to_login"
             app:destination="@id/loginFragment"

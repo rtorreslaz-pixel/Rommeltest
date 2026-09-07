@@ -8,8 +8,8 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.room.migration.Migration
 
 @Database(
-    entities = [RegistroPeso::class, SacaMuestreo::class, SacaPesada::class],
-    version = 8,
+    entities = [RegistroPeso::class, SacaMuestreo::class, SacaPesada::class, PlanItem::class],
+    version = 9,
     exportSchema = true,
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -17,6 +17,8 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun registroPesoDao(): RegistroPesoDao
 
     abstract fun sacaDao(): SacaDao
+
+    abstract fun planDao(): PlanDao
 
     companion object {
         @Volatile
@@ -99,6 +101,22 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        // Plan diario de muestreo (una fila por corral a muestrear), con su cola de
+        // sincronización. Tabla nueva: no toca la cola de pesos ni la de saca.
+        private val MIGRATION_8_9 = object : Migration(8, 9) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    "CREATE TABLE IF NOT EXISTS plan_item (" +
+                        "id TEXT NOT NULL PRIMARY KEY, fecha TEXT NOT NULL, plantelId TEXT NOT NULL, " +
+                        "plantelCodigo TEXT NOT NULL, campania TEXT NOT NULL, galpon TEXT NOT NULL, " +
+                        "corral TEXT NOT NULL, categoria TEXT NOT NULL, edad INTEGER, tipoMuestreo TEXT NOT NULL, " +
+                        "linea TEXT, lote TEXT, agrupamiento TEXT NOT NULL, circuito TEXT, orden INTEGER NOT NULL, " +
+                        "estado TEXT NOT NULL, verificadorId TEXT, borrado INTEGER NOT NULL DEFAULT 0, " +
+                        "synced INTEGER NOT NULL DEFAULT 0, createdAtEpochMillis INTEGER NOT NULL)"
+                )
+            }
+        }
+
         fun getInstance(context: Context): AppDatabase {
             return instance ?: synchronized(this) {
                 instance ?: Room.databaseBuilder(
@@ -108,7 +126,7 @@ abstract class AppDatabase : RoomDatabase() {
                     // Sin fallbackToDestructiveMigration(): un futuro cambio de esquema
                     // debe ir por una Migration real, no borrar la cola de un verificador.
                 ).addMigrations(
-                    MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8,
+                    MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9,
                 )
                     .build().also { instance = it }
             }

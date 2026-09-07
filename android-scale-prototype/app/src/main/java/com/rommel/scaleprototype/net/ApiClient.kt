@@ -62,6 +62,22 @@ class ApiClient(private val baseUrl: String, context: Context) {
         execute(request) { json.decodeFromString(SacaBatchResponse.serializer(), it) }
     }
 
+    suspend fun postPlan(items: List<PlanItemDto>, borrar: List<String> = emptyList()): PlanBatchResponse =
+        withContext(Dispatchers.IO) {
+            val body = json.encodeToString(PlanBatchRequest(items, borrar)).toRequestBody(JSON_MEDIA_TYPE)
+            val request = Request.Builder().url(baseUrl + "api/mobile/plan").post(body).build()
+            execute(request) { json.decodeFromString(PlanBatchResponse.serializer(), it) }
+        }
+
+    /** El plan de un día según el servidor, con el estado de cada fila. */
+    suspend fun getPlan(fecha: String): PlanDiaResponse = withContext(Dispatchers.IO) {
+        val url = (baseUrl + "api/mobile/plan").toHttpUrl().newBuilder()
+            .addQueryParameter("fecha", fecha)
+            .build()
+        val request = Request.Builder().url(url).get().build()
+        execute(request) { json.decodeFromString(PlanDiaResponse.serializer(), it) }
+    }
+
     suspend fun postLiveWeight(liveWeight: LiveWeightRequest) = withContext(Dispatchers.IO) {
         val body = json.encodeToString(liveWeight).toRequestBody(JSON_MEDIA_TYPE)
         val request = Request.Builder().url(baseUrl + "api/mobile/live-weight").post(body).build()

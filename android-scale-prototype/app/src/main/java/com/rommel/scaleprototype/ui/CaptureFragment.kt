@@ -63,6 +63,8 @@ class CaptureFragment : Fragment() {
     private lateinit var lote: String
     private var nAvesPorPesada: Int = 1
     private var soloCalidad: Boolean = false
+    /** Fila del plan del día de la que salió este muestreo (null si se configuró a mano). */
+    private var planItemId: String? = null
 
     private val requestBluetoothConnect = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -92,6 +94,7 @@ class CaptureFragment : Fragment() {
         lote = args.getString(CaptureSetupFragment.ARG_LOTE) ?: "J"
         nAvesPorPesada = args.getInt(CaptureSetupFragment.ARG_N_AVES_PESADA, 1)
         soloCalidad = args.getBoolean(CaptureSetupFragment.ARG_SOLO_CALIDAD, false)
+        planItemId = args.getString(CaptureSetupFragment.ARG_PLAN_ITEM_ID)
 
         binding?.textSelectionHeader?.text =
             getString(R.string.capture_header_format, plantelCodigo, campania, galpon, categoria, corral)
@@ -466,11 +469,22 @@ class CaptureFragment : Fragment() {
                 .setMessage(mensaje)
                 .setNegativeButton(android.R.string.cancel, null)
                 .setPositiveButton(R.string.finalizar_confirm) { _, _ ->
-                    // Vuelve a configurar, con los datos del lote ya puestos y el corral avanzado
-                    // al siguiente del galpón. Los pendientes siguen subiéndose solos
-                    // (WorkManager); la báscula queda conectada para el siguiente muestreo.
+                    // Los pendientes siguen subiéndose solos (WorkManager); la báscula queda
+                    // conectada para el siguiente muestreo.
                     ConfiguracionMuestreoStore.marcarCorralCompletado(requireContext())
-                    findNavController().navigate(R.id.action_capture_to_captureSetup)
+                    val idPlan = planItemId
+                    if (idPlan != null) {
+                        // Salió del plan: la fila queda hecha aquí mismo (el servidor la cruzará
+                        // igual al sincronizar) y se vuelve al plan para tocar el siguiente corral.
+                        viewLifecycleOwner.lifecycleScope.launch {
+                            AppDatabase.getInstance(requireContext()).planDao().marcarHecho(idPlan)
+                            findNavController().navigate(R.id.action_capture_to_planDia)
+                        }
+                    } else {
+                        // Vuelve a configurar, con los datos del lote ya puestos y el corral
+                        // avanzado al siguiente del galpón.
+                        findNavController().navigate(R.id.action_capture_to_captureSetup)
+                    }
                 }
                 .show()
         }

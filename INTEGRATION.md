@@ -169,6 +169,37 @@ Errores: `400` arreglo vacío, registro con campos inválidos, o `plantelId` ine
 El `complex` (`Plantel-Campaña-Galpón-Categoría-Corral`) lo calcula el **servidor**; el
 celular no lo envía.
 
+### `POST /api/mobile/plan` y `GET /api/mobile/plan`
+
+Plan diario de muestreo: lo arma el verificador en la app antes de salir (una fila por corral) y
+se sincroniza. **El cumplimiento es automático**: una fila pasa a `HECHO` cuando llega un
+muestreo (`POST /api/mobile/registros`) del mismo verificador, mismo día de la granja
+(`America/Lima`), mismo plantel, galpón (normalizado: `01` = `1`), corral (sin importar
+mayúsculas), sexo y tipo de muestreo. El cruce se hace en ambos órdenes de llegada.
+
+**POST** — idempotente por `id` (UUID generado en la app). Una fila ya `HECHO` no se pisa.
+`borrar` elimina filas **pendientes propias**; las hechas se conservan.
+
+```json
+{
+  "items": [{
+    "id": "uuid", "fecha": "2026-09-07", "plantelId": "...", "campania": "2026",
+    "galpon": "1", "corral": "A", "categoria": "HEMBRA", "edad": 35,
+    "tipoMuestreo": "PREVENTA", "linea": "ROSS", "lote": "J",
+    "agrupamiento": "GRUPAL", "circuito": "CV", "orden": 1
+  }],
+  "borrar": ["uuid-de-fila-pendiente"]
+}
+```
+
+Respuesta: `{ "ingested": 1, "cumplidos": 0, "items": [{ "id": "uuid", "estado": "PENDIENTE" }] }`.
+`403` si alguna fila pertenece a otro verificador. Enums: `agrupamiento` INDIVIDUAL|GRUPAL,
+`circuito` CV (vivo)|CB (beneficiado), `tipoMuestreo` PREVENTA|CALIDAD, `estado` PENDIENTE|HECHO.
+
+**GET** `?fecha=yyyy-MM-dd` (hoy por defecto): las filas del verificador ese día con
+`plantelCodigo`, `estado` y `cumplidoEn`, en el orden del plan. La app la usa para refrescar el
+estado que calculó el servidor (que cruza contra todos los muestreos, no solo los del teléfono).
+
 ## 6. Modelos de BD compartidos
 
 Definidos en `prisma/schema.prisma`. **No editar sin coordinar con Web (dueño de la BD).**
@@ -181,6 +212,13 @@ lote opcionales (`edad?`, `linea?`, `lote?`, `nAvesPorPesada?`), criterios de ca
 opcionales por ave (`tieneHematoma?`, `tieneDefectoSeleccion?`, `gradoPododermatitis?`,
 `gradoRasguno?`, `pigmentacion?`), `verificadorId`, `syncedAt`, `createdAt`.
 Índices: `[plantelId, galpon, corral, categoria]`, `[verificadorId, fechaHora]`.
+
+### `PlanMuestreoItem`
+
+Fila del plan diario (ver endpoint `plan`): `verificadorId`, `fecha` (texto `yyyy-MM-dd`),
+`plantelId`, `campania`, `galpon`, `corral`, `categoria`, `edad`, `tipoMuestreo`, `linea`, `lote`,
+`agrupamiento`, `circuito`, `orden`, `estado`, `cumplidoEn`, `complex`. En la app es la tabla
+Room `plan_item` (v9), con `synced` y `borrado` para su cola de sincronización.
 
 ### `PesoEstandar`
 Tabla de pesos estándar por raza. Campos: `linea` (Ross/Cobb/etc.), `sexo` (MACHO|HEMBRA),

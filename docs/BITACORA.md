@@ -95,6 +95,14 @@ calidad del pollo en el cliente + pesaje preventa en granja. Omnicanal:
   otra báscula conectó bien. Solución: apagar/encender la báscula, desemparejar de la app de
   Bröring, re-emparejar y reintentar.
 - Offline: cola local (Room `scale-prototype.db`), sync por lotes, alertas de pendientes y de atribución (otro usuario).
+- **Plan del día** (app + web): el verificador arma en la app, antes de salir, la lista de corrales
+  que va a muestrear (plantel, campaña, galpón, corrales A–D, sexo, edad, tipo, línea, lote,
+  agrupamiento INDIVIDUAL/GRUPAL, circuito CV vivo / CB beneficiado). Tocar una fila abre la
+  configuración de captura ya llena. **Cumplimiento automático**: la fila pasa a HECHO cuando llega
+  el muestreo que coincide (mismo día, plantel, galpón, corral, sexo y tipo), en el teléfono al
+  finalizar y en el servidor al sincronizar, en cualquier orden de llegada. Web: `/planeamiento`
+  con filtros por día y verificador, tarjetas de cumplimiento y Excel con el formato de
+  planificación del usuario. Contrato en `INTEGRATION.md` (`/api/mobile/plan`). Room v9.
 - **Continuidad entre corrales**: un galpón tiene **4 corrales (A–D)** y entre uno y otro solo cambia
   el corral. La pantalla de configuración recuerda el último muestreo (`ConfiguracionMuestreoStore`,
   SharedPreferences) y vuelve a aparecer llena, con el corral avanzado al siguiente **solo si se

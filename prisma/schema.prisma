@@ -55,6 +55,22 @@ enum TipoMuestreo {
   CALIDAD // reservado para una fase futura, no usado todavía
 }
 
+// Plan diario de muestreo (lo arma el verificador antes de salir a campo).
+enum AgrupamientoMuestreo {
+  INDIVIDUAL // aves pesadas de una en una
+  GRUPAL     // varias aves por pesada
+}
+
+enum CircuitoMuestreo {
+  CV // circuito vivo
+  CB // circuito beneficiado
+}
+
+enum EstadoPlanMuestreo {
+  PENDIENTE
+  HECHO // se marca solo cuando llega el muestreo que coincide con la fila
+}
+
 model User {
   id                 String   @id @default(cuid())
   nombre             String
@@ -73,6 +89,7 @@ model User {
   sacaMuestreos         SacaMuestreo[]
   liveWeightReading     LiveWeightReading?
   sessions              Session[]
+  planMuestreo          PlanMuestreoItem[]
 }
 
 // Sesión web con token opaco aleatorio (la cookie guarda el token, no el userId),
@@ -117,6 +134,7 @@ model Plantel {
   inspecciones          Inspeccion[]
   registrosPesoPreventa RegistroPesoPreventa[]
   sacaMuestreos         SacaMuestreo[]
+  planMuestreo          PlanMuestreoItem[]
 }
 
 model TipoDefecto {
@@ -623,4 +641,45 @@ model LiveWeightReading {
   complex       String?
 
   updatedAt DateTime @updatedAt
+}
+
+// Una fila del plan diario del verificador: qué corral va a muestrear, con qué parámetros. La
+// crea la app (offline) con un id UUID propio y se sincroniza; el estado pasa a HECHO solo cuando
+// llega un muestreo del mismo verificador, día, plantel, galpón, corral, sexo y tipo.
+model PlanMuestreoItem {
+  id String @id
+
+  verificadorId String
+  verificador   User @relation(fields: [verificadorId], references: [id])
+
+  // Día del plan en hora de la granja (yyyy-MM-dd). Texto a propósito: no depende de zona horaria.
+  fecha String
+
+  plantelId String
+  plantel   Plantel @relation(fields: [plantelId], references: [id])
+
+  campania     String
+  galpon       String
+  corral       String
+  categoria    CategoriaAve
+  edad         Int?
+  tipoMuestreo TipoMuestreo         @default(PREVENTA)
+  linea        String?
+  lote         String?
+  agrupamiento AgrupamientoMuestreo @default(INDIVIDUAL)
+  circuito     CircuitoMuestreo?
+  // Orden dentro del día, para listar el plan como lo armó el verificador.
+  orden Int @default(0)
+
+  estado     EstadoPlanMuestreo @default(PENDIENTE)
+  cumplidoEn DateTime?
+
+  // Misma clave que RegistroPesoPreventa.complex, para cruzar y para reportar.
+  complex String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([verificadorId, fecha])
+  @@index([plantelId, fecha])
 }

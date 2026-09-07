@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Agregar corrales al plan: se define el lote una vez y se marcan los corrales. -->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/sf_bg"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            style="@style/SfSectionTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/title_plan_item" />
+
+        <TextView
+            style="@style/SfFieldLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/label_plantel" />
+
+        <Spinner
+            android:id="@+id/spinnerPlanPlantel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp" />
+
+        <TextView
+            style="@style/SfFieldLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/label_campania" />
+
+        <EditText
+            android:id="@+id/editPlanCampania"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/label_campania"
+            android:layout_marginBottom="12dp" />
+
+        <TextView
+            style="@style/SfFieldLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/label_galpon" />
+
+        <EditText
+            android:id="@+id/editPlanGalpon"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/label_galpon"
+            android:layout_marginBottom="12dp" />
+
+        <TextView
+            style="@style/SfFieldLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/label_corrales_plan" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <CheckBox
+                android:id="@+id/checkPlanCorralA"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:checked="true"
+                android:text="A" />
+
+            <CheckBox
+                android:id="@+id/checkPlanCorralB"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:checked="true"
+                android:text="B" />
+
+            <CheckBox
+                android:id="@+id/checkPlanCorralC"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:checked="true"
+                android:text="C" />
+
+            <CheckBox
+                android:id="@+id/checkPlanCorralD"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:checked="true"
+                android:text="D" />
+        </LinearLayout>
+
+        <EditText
+            android:id="@+id/editPlanCorralOtro"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/plan_corral_otro_hint"
+            android:layout_marginBottom="12dp" />
+
+        <TextView
+            style="@style/SfFieldLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/label_sexo" />
+
+        <RadioGroup
+            android:id="@+id/radioGroupPlanSexo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="12dp">
+
+            <RadioButton
+                android:id="@+id/radioPlanMacho"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:checked="true"
+                android:text="@string/categoria_macho" />
+
+            <RadioButton
+                android:id="@+id/radioPlanHembra"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/categoria_hembra" />
+
+            <RadioButton
+                android:id="@+id/radioPlanMediano"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/categoria_mediano" />
+        </RadioGroup>
+
+        <TextView
+            style="@style/SfFieldLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/label_edad" />
+
+        <EditText
+            android:id="@+id/editPlanEdad"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/label_edad"
+            android:inputType="number"
+            android:layout_marginBottom="12dp" />
+
+        <TextView
+            style="@style/SfFieldLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/label_tipo_captura" />
+
+        <RadioGroup
+            android:id="@+id/radioGroupPlanTipo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="12dp">
+
+            <RadioButton
+                android:id="@+id/radioPlanPesaje"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:checked="true"
+                android:text="@string/modo_pesaje" />
+
+            <RadioButton
+                android:id="@+id/radioPlanCalidad"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/modo_solo_calidad" />
+        </RadioGroup>
+
+        <TextView
+            style="@style/SfFieldLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/label_linea" />
+
+        <Spinner
+            android:id="@+id/spinnerPlanLinea"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp" />
+
+        <TextView
+            style="@style/SfFieldLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/label_lote" />
+
+        <RadioGroup
+            android:id="@+id/radioGroupPlanLote"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="12dp">
+
+            <RadioButton
+                android:id="@+id/radioPlanLoteJ"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:checked="true"
+                android:text="@string/lote_j" />
+
+            <RadioButton
+                android:id="@+id/radioPlanLoteA"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/lote_a" />
+        </RadioGroup>
+
+        <TextView
+            style="@style/SfFieldLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/label_agrupamiento" />
+
+        <RadioGroup
+            android:id="@+id/radioGroupPlanAgrupamiento"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="12dp">
+
+            <RadioButton
+                android:id="@+id/radioPlanIndividual"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:checked="true"
+                android:text="@string/plan_individual" />
+
+            <RadioButton
+                android:id="@+id/radioPlanGrupal"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/plan_grupal" />
+        </RadioGroup>
+
+        <TextView
+            style="@style/SfFieldLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/label_circuito" />
+
+        <RadioGroup
+            android:id="@+id/radioGroupPlanCircuito"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="16dp">
+
+            <RadioButton
+                android:id="@+id/radioPlanCircuitoNinguno"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:checked="true"
+                android:text="@string/plan_circuito_ninguno" />
+
+            <RadioButton
+                android:id="@+id/radioPlanCircuitoCV"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text="@string/plan_circuito_cv" />
+
+            <RadioButton
+                android:id="@+id/radioPlanCircuitoCB"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text="@string/plan_circuito_cb" />
+        </RadioGroup>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/buttonGuardarPlan"
+            style="@style/SfButtonPrimary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/plan_guardar" />
+
+        <TextView
+            android:id="@+id/textPlanItemError"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/sf_red"
+            android:layout_marginTop="12dp"
+            android:visibility="gone" />
+    </LinearLayout>
+</ScrollView>

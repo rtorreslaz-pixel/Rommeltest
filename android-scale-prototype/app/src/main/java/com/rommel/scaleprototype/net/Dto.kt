@@ -103,3 +103,39 @@ data class SacaBatchRequest(val muestreos: List<SacaMuestreoDto>)
 
 @Serializable
 data class SacaBatchResponse(val ingested: Int, val ids: List<String>)
+
+// --- Plan diario de muestreo ---
+
+@Serializable
+data class PlanItemDto(
+    val id: String,
+    val fecha: String,
+    val plantelId: String,
+    val campania: String,
+    val galpon: String,
+    val corral: String,
+    val categoria: String,
+    val edad: Int? = null,
+    val tipoMuestreo: String? = null,
+    val linea: String? = null,
+    val lote: String? = null,
+    val agrupamiento: String? = null,
+    val circuito: String? = null,
+    val orden: Int? = null,
+    // Solo vienen del servidor (GET): la app no los manda.
+    val plantelCodigo: String? = null,
+    val estado: String? = null,
+)
+
+@Serializable
+data class PlanBatchRequest(val items: List<PlanItemDto>, val borrar: List<String> = emptyList())
+
+@Serializable
+data class PlanEstadoDto(val id: String, val estado: String)
+
+@Serializable
+data class PlanBatchResponse(val ingested: Int, val cumplidos: Int = 0, val items: List<PlanEstadoDto> = emptyList())
+
+@Serializable
+data class PlanDiaResponse(val fecha: String, val items: List<PlanItemDto>)
+

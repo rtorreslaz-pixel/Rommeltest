@@ -159,4 +159,41 @@
     <string name="saca_item_format">Pesada %1$d · %2$d jabas</string>
     <string name="saca_item_detalle">bruto %1$.2f · tara %2$.1f · neto %3$.2f kg</string>
     <string name="saca_item_prom">%1$d g/ave</string>
+
+    <!-- Plan del día -->
+    <string name="title_plan_dia">Plan del día</string>
+    <string name="title_plan_item">Agregar corrales al plan</string>
+    <string name="home_plan">Plan del día</string>
+    <string name="home_plan_desc">Arma lo que vas a muestrear hoy y ve cumpliéndolo corral por corral.</string>
+    <string name="home_plan_resumen_format">Plan de hoy: %1$d de %2$d corrales hechos</string>
+    <string name="plan_fecha_format">Plan de %1$s</string>
+    <string name="plan_avance_format">%1$d de %2$d corrales hechos</string>
+    <string name="plan_vacio">Todavía no hay corrales en el plan de hoy. Agrega los que vas a muestrear.</string>
+    <string name="plan_sync_ok">✓ Plan sincronizado con la web</string>
+    <string name="plan_sync_pendientes">%1$d cambio(s) del plan por sincronizar</string>
+    <string name="plan_agregar">+ Agregar corrales</string>
+    <string name="plan_sincronizar">Sincronizar</string>
+    <string name="plan_guardar">Agregar al plan</string>
+    <string name="plan_item_lote_format">%1$s · galpón %2$s · %3$s</string>
+    <string name="plan_item_edad_format">%1$d d</string>
+    <string name="plan_item_lote_letra_format">Lote %1$s</string>
+    <string name="plan_grupal">Grupal</string>
+    <string name="plan_individual">Individual</string>
+    <string name="plan_estado_hecho">Hecho</string>
+    <string name="plan_estado_pendiente">Pendiente</string>
+    <string name="plan_tocar_hint">Toca un corral pendiente para ir a pesarlo. Mantén pulsado para quitarlo del plan.</string>
+    <string name="plan_quitar_titulo">Quitar del plan</string>
+    <string name="plan_quitar_mensaje">¿Quitar el corral %1$s (%2$s, galpón %3$s) del plan de hoy?</string>
+    <string name="plan_quitar_confirmar">Quitar</string>
+    <plurals name="plan_agregados">
+        <item quantity="one">%1$d corral agregado al plan</item>
+        <item quantity="other">%1$d corrales agregados al plan</item>
+    </plurals>
+    <string name="label_corrales_plan">Corrales a muestrear</string>
+    <string name="plan_corral_otro_hint">Otro corral (opcional)</string>
+    <string name="label_agrupamiento">Agrupamiento</string>
+    <string name="label_circuito">Circuito</string>
+    <string name="plan_circuito_ninguno">—</string>
+    <string name="plan_circuito_cv">CV — vivo</string>
+    <string name="plan_circuito_cb">CB — beneficiado</string>
 </resources>

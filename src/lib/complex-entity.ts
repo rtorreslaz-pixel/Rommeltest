@@ -66,7 +66,7 @@ export function complexLoteFromComplex(complex: string | null): string | null {
 // Normaliza el galpón para el cruce: quita ceros a la izquierda si es numérico
 // ("09" -> "9"), de modo que preventa (granja) y calidad (cliente) generen el MISMO
 // complex aunque los orígenes formateen distinto el número de galpón.
-function normGalpon(g: string | null): string {
+export function normGalpon(g: string | null): string {
   if (!g) return "";
   const s = String(g).trim().toUpperCase();
   return /^\d+$/.test(s) ? String(parseInt(s, 10)) : s;

@@ -3,6 +3,7 @@ import { prisma } from "@/lib/db";
 import { requireMobileUser } from "@/lib/auth";
 import { CategoriaAve, TipoMuestreo } from "@/generated/prisma/enums";
 import { buildComplexEntity } from "@/lib/complex-entity";
+import { cumplirPlanConRegistros } from "@/lib/plan-muestreo";
 
 type RegistroInput = {
   id: string;
@@ -133,6 +134,24 @@ export async function POST(request: NextRequest) {
       })
     )
   );
+
+  // Cumplimiento del plan del día: las filas que coinciden con lo recién muestreado pasan a
+  // HECHO. Si esto fallara no se pierde el lote ya guardado; se registra y se responde igual.
+  try {
+    await cumplirPlanConRegistros(
+      user.id,
+      registros.map((r) => ({
+        plantelId: r.plantelId,
+        galpon: r.galpon,
+        corral: r.corral,
+        categoria: r.categoria as CategoriaAve,
+        tipoMuestreo: (r.tipoMuestreo as TipoMuestreo | null | undefined) ?? TipoMuestreo.PREVENTA,
+        fechaHora: new Date(r.fechaHora),
+      }))
+    );
+  } catch (e) {
+    console.error("No se pudo cruzar el plan de muestreo:", e);
+  }
 
   return NextResponse.json({ ingested: ids.length, ids: ids.map((r) => r.id) });
 }

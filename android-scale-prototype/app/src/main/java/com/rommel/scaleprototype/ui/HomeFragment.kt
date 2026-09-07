@@ -40,7 +40,28 @@ class HomeFragment : Fragment() {
         binding?.buttonSaca?.setOnClickListener {
             findNavController().navigate(R.id.action_home_to_sacaSetup)
         }
+        binding?.buttonPlan?.setOnClickListener {
+            findNavController().navigate(R.id.action_home_to_planDia)
+        }
         avisarSacaPendiente()
+        resumirPlanDeHoy()
+    }
+
+    /** Avance del plan de hoy debajo del botón: "3 de 8 corrales hechos". */
+    private fun resumirPlanDeHoy() {
+        val dao = AppDatabase.getInstance(requireContext()).planDao()
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                dao.getDelDiaFlow(PlanDiaFragment.hoy()).collect { items ->
+                    val vista = binding?.textPlanResumen ?: return@collect
+                    vista.text = if (items.isEmpty()) {
+                        getString(R.string.home_plan_desc)
+                    } else {
+                        getString(R.string.home_plan_resumen_format, items.count { it.estado == "HECHO" }, items.size)
+                    }
+                }
+            }
+        }
     }
 
     /** Si quedaron muestreos de saca sin subir, se avisa aquí para que no se olviden. */

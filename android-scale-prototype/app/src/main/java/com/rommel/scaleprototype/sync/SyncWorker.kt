@@ -5,11 +5,13 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.rommel.scaleprototype.auth.AuthRepository
 import com.rommel.scaleprototype.data.AppDatabase
+import com.rommel.scaleprototype.data.PlanItem
 import com.rommel.scaleprototype.data.RegistroPeso
 import com.rommel.scaleprototype.data.SacaMuestreo
 import com.rommel.scaleprototype.data.SacaPesada
 import com.rommel.scaleprototype.net.ApiClient
 import com.rommel.scaleprototype.net.ApiException
+import com.rommel.scaleprototype.net.PlanItemDto
 import com.rommel.scaleprototype.net.RegistroDto
 import com.rommel.scaleprototype.net.SacaMuestreoDto
 import com.rommel.scaleprototype.net.SacaPesadaDto
@@ -25,6 +27,7 @@ class SyncWorker(context: Context, params: WorkerParameters) : CoroutineWorker(c
         val db = AppDatabase.getInstance(applicationContext)
         val dao = db.registroPesoDao()
         val sacaDao = db.sacaDao()
+        val planDao = db.planDao()
         val apiClient = ApiClient.getInstance(applicationContext)
 
         return try {
@@ -43,6 +46,28 @@ class SyncWorker(context: Context, params: WorkerParameters) : CoroutineWorker(c
                 apiClient.postSaca(dtos)
                 sacaDao.markSynced(sacas.map { it.id })
                 sacas = sacaDao.getUnsyncedMuestreos(SACA_BATCH_SIZE)
+            }
+
+            // Plan del día: primero lo nuevo o editado, luego lo marcado para borrar. Después se
+            // baja el estado que el servidor calculó para hoy (él cruza contra TODOS los
+            // muestreos, no solo los de este teléfono), sin pisar lo que aquí ya está HECHO.
+            var plan = planDao.getUnsynced(BATCH_SIZE)
+            while (plan.isNotEmpty()) {
+                val respuesta = apiClient.postPlan(plan.map { it.toDto() })
+                planDao.markSynced(plan.map { it.id })
+                respuesta.items.forEach { planDao.actualizarEstado(it.id, it.estado) }
+                plan = planDao.getUnsynced(BATCH_SIZE)
+            }
+            val borrados = planDao.getBorradosPendientes()
+            if (borrados.isNotEmpty()) {
+                apiClient.postPlan(emptyList(), borrar = borrados)
+                planDao.eliminar(borrados)
+            }
+            runCatching {
+                val hoy = diaGranja.format(Date())
+                apiClient.getPlan(hoy).items.forEach { dto ->
+                    dto.estado?.let { planDao.actualizarEstado(dto.id, it) }
+                }
             }
             Result.success()
         } catch (e: ApiException) {
@@ -71,6 +96,28 @@ class SyncWorker(context: Context, params: WorkerParameters) : CoroutineWorker(c
         private val isoFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US).apply {
             timeZone = TimeZone.getTimeZone("UTC")
         }
+
+        /** Día de la granja (Perú), igual que lo calcula el servidor. */
+        private val diaGranja = SimpleDateFormat("yyyy-MM-dd", Locale.US).apply {
+            timeZone = TimeZone.getTimeZone("America/Lima")
+        }
+
+        private fun PlanItem.toDto() = PlanItemDto(
+            id = id,
+            fecha = fecha,
+            plantelId = plantelId,
+            campania = campania,
+            galpon = galpon,
+            corral = corral,
+            categoria = categoria,
+            edad = edad,
+            tipoMuestreo = tipoMuestreo,
+            linea = linea,
+            lote = lote,
+            agrupamiento = agrupamiento,
+            circuito = circuito,
+            orden = orden,
+        )
 
         private fun RegistroPeso.toDto() = RegistroDto(
             id = id,

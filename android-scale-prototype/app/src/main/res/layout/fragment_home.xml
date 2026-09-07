@@ -19,8 +19,25 @@
             android:text="@string/title_home" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/buttonPreventa"
+            android:id="@+id/buttonPlan"
             style="@style/SfButtonPrimary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/home_plan" />
+
+        <TextView
+            android:id="@+id/textPlanResumen"
+            style="@style/SfMuted"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="16dp"
+            android:text="@string/home_plan_desc" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/buttonPreventa"
+            style="@style/SfButtonGhost"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/home_preventa" />
