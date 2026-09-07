@@ -48,6 +48,14 @@ class PlanItemFragment : Fragment() {
         )
         cargarPlanteles()
         precargarUltimoLote()
+        // Estándar: preventa de a una ave; calidad de a tres. Al cambiar el tipo se propone el
+        // agrupamiento que corresponde (sigue editable por si un caso lo amerita).
+        binding?.radioGroupPlanTipo?.setOnCheckedChangeListener { _, checkedId ->
+            val tipo = if (checkedId == R.id.radioPlanCalidad) EstandaresMuestreo.TIPO_CALIDAD else EstandaresMuestreo.TIPO_PREVENTA
+            binding?.radioGroupPlanAgrupamiento?.check(
+                if (EstandaresMuestreo.agrupamientoPara(tipo) == "GRUPAL") R.id.radioPlanGrupal else R.id.radioPlanIndividual
+            )
+        }
         binding?.buttonGuardarPlan?.setOnClickListener { guardar() }
     }
 

@@ -35,12 +35,14 @@
             android:layout_marginBottom="16dp"
             android:text="@string/home_plan_desc" />
 
+        <!-- El plan del día es SOLO de preventa / calidad: va pegado a ese flujo. La saca no
+             tiene plan y se configura directo. -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/buttonPreventa"
             style="@style/SfButtonGhost"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/home_preventa" />
+            android:text="@string/home_preventa_sin_plan" />
 
         <TextView
             style="@style/SfMuted"

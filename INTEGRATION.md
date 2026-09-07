@@ -171,8 +171,8 @@ celular no lo envía.
 
 ### `POST /api/mobile/plan` y `GET /api/mobile/plan`
 
-Plan diario de muestreo: lo arma el verificador en la app antes de salir (una fila por corral) y
-se sincroniza. **El cumplimiento es automático**: una fila pasa a `HECHO` cuando llega un
+Plan diario de muestreo **de preventa / calidad** (la saca no lleva plan): lo arma el verificador en la
+app antes de salir (una fila por corral) y se sincroniza. **El cumplimiento es automático**: una fila pasa a `HECHO` cuando llega un
 muestreo (`POST /api/mobile/registros`) del mismo verificador, mismo día de la granja
 (`America/Lima`), mismo plantel, galpón (normalizado: `01` = `1`), corral (sin importar
 mayúsculas), sexo y tipo de muestreo. El cruce se hace en ambos órdenes de llegada.

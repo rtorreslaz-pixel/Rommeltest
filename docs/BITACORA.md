@@ -95,9 +95,11 @@ calidad del pollo en el cliente + pesaje preventa en granja. Omnicanal:
   otra báscula conectó bien. Solución: apagar/encender la báscula, desemparejar de la app de
   Bröring, re-emparejar y reintentar.
 - Offline: cola local (Room `scale-prototype.db`), sync por lotes, alertas de pendientes y de atribución (otro usuario).
-- **Plan del día** (app + web): el verificador arma en la app, antes de salir, la lista de corrales
+- **Plan del día — solo preventa / calidad** (app + web; la saca no lleva plan): el verificador arma en la app, antes de salir, la lista de corrales
   que va a muestrear (plantel, campaña, galpón, corrales A–D, sexo, edad, tipo, línea, lote,
-  agrupamiento INDIVIDUAL/GRUPAL, circuito CV vivo / CB beneficiado). Tocar una fila abre la
+  agrupamiento INDIVIDUAL/GRUPAL, circuito CV vivo / CB beneficiado). **Estándar** (`EstandaresMuestreo`):
+  preventa de a 1 ave (individual), calidad de a 3 aves (grupal); la app lo propone al elegir el tipo y
+  sigue editable. Tocar una fila abre la
   configuración de captura ya llena. **Cumplimiento automático**: la fila pasa a HECHO cuando llega
   el muestreo que coincide (mismo día, plantel, galpón, corral, sexo y tipo), en el teléfono al
   finalizar y en el servidor al sincronizar, en cualquier orden de llegada. Web: `/planeamiento`

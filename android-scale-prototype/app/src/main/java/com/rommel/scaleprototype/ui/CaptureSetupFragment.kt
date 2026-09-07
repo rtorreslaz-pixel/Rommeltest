@@ -67,6 +67,12 @@ class CaptureSetupFragment : Fragment() {
         binding?.editGalpon?.doAfterTextChanged { ocultarError() }
         binding?.editEdad?.doAfterTextChanged { ocultarError() }
 
+        // Estándar al cambiar el tipo a mano: pesaje de a una ave, calidad de a tres.
+        binding?.radioGroupModo?.setOnCheckedChangeListener { _, checkedId ->
+            val tipo = if (checkedId == R.id.radioModoCalidad) EstandaresMuestreo.TIPO_CALIDAD else EstandaresMuestreo.TIPO_PREVENTA
+            binding?.spinnerNAvesPesada?.setSelection((EstandaresMuestreo.avesPorPesadaPara(tipo) - 1).coerceIn(0, 9))
+        }
+
         loadPlanteles()
         warnIfStalePendingRecords()
         binding?.buttonStartCapture?.setOnClickListener { onStartCaptureClicked() }
@@ -123,8 +129,8 @@ class CaptureSetupFragment : Fragment() {
         val iLinea = LINEAS_GENETICAS.indexOf(cfg.linea)
         if (iLinea >= 0) b.spinnerLinea.setSelection(iLinea)
         b.radioGroupLote.check(if (cfg.lote == "A") R.id.radioLoteA else R.id.radioLoteJ)
-        if (cfg.nAvesPorPesada in 1..10) b.spinnerNAvesPesada.setSelection(cfg.nAvesPorPesada - 1)
         b.radioGroupModo.check(if (cfg.soloCalidad) R.id.radioModoCalidad else R.id.radioModoPesaje)
+        if (cfg.nAvesPorPesada in 1..10) b.spinnerNAvesPesada.setSelection(cfg.nAvesPorPesada - 1)
 
         mostrarCorralesYaMuestreados(cfg)
     }
@@ -160,12 +166,15 @@ class CaptureSetupFragment : Fragment() {
             if (iLinea >= 0) b.spinnerLinea.setSelection(iLinea)
             b.radioGroupLote.check(if (item.lote == "A") R.id.radioLoteA else R.id.radioLoteJ)
             b.radioGroupModo.check(if (item.tipoMuestreo == "CALIDAD") R.id.radioModoCalidad else R.id.radioModoPesaje)
-            // Grupal: se propone la última cantidad usada (o 5 si nunca se pesó en grupo).
-            val nAves = if (item.agrupamiento == "GRUPAL") {
-                val cfg = ConfiguracionMuestreoStore.leer(requireContext(), AuthRepository(requireContext()).getVerificadorId())
-                cfg?.nAvesPorPesada?.takeIf { it > 1 } ?: 5
-            } else {
-                1
+            // Estándar: preventa de a una ave, calidad de a tres. Si la fila del plan pide grupal
+            // en un pesaje de preventa (fuera de estándar), se propone la última cantidad usada.
+            val nAves = when {
+                item.agrupamiento != "GRUPAL" -> EstandaresMuestreo.AVES_POR_PESADA_PREVENTA
+                item.tipoMuestreo == EstandaresMuestreo.TIPO_CALIDAD -> EstandaresMuestreo.AVES_POR_PESADA_CALIDAD
+                else -> {
+                    val cfg = ConfiguracionMuestreoStore.leer(requireContext(), AuthRepository(requireContext()).getVerificadorId())
+                    cfg?.nAvesPorPesada?.takeIf { it > 1 } ?: EstandaresMuestreo.AVES_POR_PESADA_CALIDAD
+                }
             }
             b.spinnerNAvesPesada.setSelection((nAves - 1).coerceIn(0, 9))
         }

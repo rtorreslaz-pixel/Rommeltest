@@ -161,12 +161,13 @@
     <string name="saca_item_prom">%1$d g/ave</string>
 
     <!-- Plan del día -->
-    <string name="title_plan_dia">Plan del día</string>
+    <string name="title_plan_dia">Plan del día — preventa / calidad</string>
     <string name="title_plan_item">Agregar corrales al plan</string>
-    <string name="home_plan">Plan del día</string>
-    <string name="home_plan_desc">Arma lo que vas a muestrear hoy y ve cumpliéndolo corral por corral.</string>
-    <string name="home_plan_resumen_format">Plan de hoy: %1$d de %2$d corrales hechos</string>
-    <string name="plan_fecha_format">Plan de %1$s</string>
+    <string name="home_preventa_sin_plan">Pesar preventa / calidad sin plan</string>
+    <string name="home_plan">Plan del día · preventa / calidad</string>
+    <string name="home_plan_desc">Arma los corrales de preventa / calidad que vas a muestrear hoy y ve cumpliéndolos uno por uno.</string>
+    <string name="home_plan_resumen_format">Plan de hoy (preventa / calidad): %1$d de %2$d corrales hechos</string>
+    <string name="plan_fecha_format">Preventa / calidad · %1$s</string>
     <string name="plan_avance_format">%1$d de %2$d corrales hechos</string>
     <string name="plan_vacio">Todavía no hay corrales en el plan de hoy. Agrega los que vas a muestrear.</string>
     <string name="plan_sync_ok">✓ Plan sincronizado con la web</string>

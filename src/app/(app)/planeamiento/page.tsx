@@ -65,7 +65,7 @@ export default async function PlaneamientoPage({
   return (
     <div>
       <div className="mb-1 flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-xl font-bold text-slate-900">Planeamiento del muestreo</h1>
+        <h1 className="text-xl font-bold text-slate-900">Planeamiento del muestreo de preventa / calidad</h1>
         <div className="flex items-center gap-2">
           <a href={`/api/planeamiento/export?${query}&formato=xlsx`} download className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">
             Descargar Excel
@@ -76,9 +76,10 @@ export default async function PlaneamientoPage({
         </div>
       </div>
       <p className="mb-4 text-sm text-slate-500">
-        El plan del día lo arma cada verificador en la app antes de salir a campo. Cada fila es un corral a muestrear y
-        pasa a <span className="font-semibold">Hecho</span> sola cuando llega el muestreo que coincide (mismo día, plantel,
-        galpón, corral, sexo y tipo).
+        Plan diario de <span className="font-semibold">pesaje de preventa y calidad</span> (la saca no lleva plan). Lo arma
+        cada verificador en la app antes de salir a campo. Cada fila es un corral a muestrear y pasa a{" "}
+        <span className="font-semibold">Hecho</span> sola cuando llega el muestreo que coincide (mismo día, plantel, galpón,
+        corral, sexo y tipo). Estándar: preventa de a una ave (individual); calidad de a tres aves (grupal).
       </p>
 
       <form method="get" className="mb-6 flex flex-wrap items-end gap-3 rounded-xl bg-white p-4 shadow-sm ring-1 ring-slate-200">
