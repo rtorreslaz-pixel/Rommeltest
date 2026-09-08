@@ -1,9 +1,13 @@
-# Construye el APK (debug) de la app Android de pesaje y lo publica como artefacto
-# descargable, corriendo antes los tests unitarios (parsers de básculas, DTOs, Room).
+# Construye los APK de la app Android de pesaje, corriendo antes los tests unitarios
+# (parsers de básculas, DTOs, Room), y los publica de dos formas:
 #
-# Cómo obtener el APK: GitHub -> pestaña Actions -> "Android APK" -> el run más reciente
-# -> sección "Artifacts" -> descargar "bit-scale-app-debug". Dentro viene app-debug.apk,
-# listo para instalar en un celular (requiere permitir "instalar apps de origen desconocido").
+# 1. Como ARTEFACTOS del run (debug y release). Solo los descarga quien tiene sesión en
+#    GitHub y acceso al repositorio; sirven para revisar un build cualquiera.
+# 2. Como RELEASE de GitHub, cuando la versión de la app (versionName en build.gradle.kts)
+#    cambia respecto al último release publicado. El enlace es PÚBLICO y permanente, así que
+#    se puede pegar en un correo y los verificadores lo descargan sin cuenta de GitHub:
+#      https://github.com/<owner>/<repo>/releases/latest/download/app-release.apk
+#    (ese enlace siempre apunta a la última versión publicada).
 name: Android APK
 
 on:
@@ -17,6 +21,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    # Necesario para crear el release: por defecto el token del workflow es de solo lectura.
+    permissions:
+      contents: write
     defaults:
       run:
         working-directory: android-scale-prototype
@@ -59,3 +66,50 @@ jobs:
           name: bit-scale-app-release
           path: android-scale-prototype/app/build/outputs/apk/release/app-release.apk
           if-no-files-found: error
+
+      # --- Release de GitHub: enlace público para repartir el APK por correo ---
+
+      # La versión sale de build.gradle.kts, que es donde ya se lleva: versionName da el
+      # nombre visible ("2.4 (plan del día)") y versionCode la etiqueta (v2.4-15), única
+      # aunque se repita un versionName por error.
+      - name: Leer versión de la app
+        id: version
+        run: |
+          NOMBRE=$(grep -oP 'versionName\s*=\s*"\K[^"]+' app/build.gradle.kts)
+          CODIGO=$(grep -oP 'versionCode\s*=\s*\K\d+' app/build.gradle.kts)
+          CORTA=$(echo "$NOMBRE" | grep -oP '^[\d.]+')
+          echo "nombre=$NOMBRE" >> "$GITHUB_OUTPUT"
+          echo "tag=v$CORTA-$CODIGO" >> "$GITHUB_OUTPUT"
+          echo "Versión $NOMBRE -> etiqueta v$CORTA-$CODIGO"
+
+      # Si la etiqueta ya existe, esta versión ya se publicó: no se vuelve a crear el release
+      # (un build de la misma versión no debe pisar el APK que ya se repartió).
+      - name: ¿Esta versión ya tiene release?
+        id: existe
+        run: |
+          if git ls-remote --exit-code --tags origin "refs/tags/${{ steps.version.outputs.tag }}" >/dev/null 2>&1; then
+            echo "publicar=no" >> "$GITHUB_OUTPUT"
+            echo "La etiqueta ya existe: no se publica release."
+          else
+            echo "publicar=si" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Publicar release con el APK de producción
+        if: steps.existe.outputs.publicar == 'si'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          name: SF Pesaje Granja ${{ steps.version.outputs.nombre }}
+          files: android-scale-prototype/app/build/outputs/apk/release/app-release.apk
+          body: |
+            APK de **producción** de la app SF Pesaje Granja, versión ${{ steps.version.outputs.nombre }}.
+
+            **Descarga directa (no requiere cuenta de GitHub):**
+            https://github.com/${{ github.repository }}/releases/latest/download/app-release.apk
+
+            Se instala sobre la versión anterior sin perder los pesajes pendientes de
+            sincronizar ni la sesión iniciada. Android pedirá permitir la instalación de
+            aplicaciones de origen desconocido.
+
+            Se ingresa con las credenciales del sistema; cada persona con su propia cuenta de
+            verificador para que los muestreos queden bien atribuidos.

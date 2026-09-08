@@ -41,7 +41,15 @@ calidad del pollo en el cliente + pesaje preventa en granja. Omnicanal:
 - **`DATABASE_URL` absoluta en producción** (relativa `file:./dev.db` falla con `CANTOPEN` en el build de producción de Next).
 - **`DISABLE_WAL=true`** cuando SQLite está en un **volumen** de Railway (WAL necesita archivos de memoria compartida que el volumen no soporta → `SQLITE_READONLY`).
 - El **demo es efímero** (sin volumen): se re-siembra en cada deploy — ideal para mostrar, no para datos reales.
-- **APK por CI**: workflow "Android APK" (`.github/workflows/android-apk.yml`) corre tests y publica `app-debug.apk` como artefacto en cada push que toque `android-scale-prototype/`. Debug→demo, release→prod.
+- **APK por CI**: workflow "Android APK" (`.github/workflows/android-apk.yml`) corre tests y publica
+  `app-debug.apk` y `app-release.apk` como artefactos en cada push que toque
+  `android-scale-prototype/`. Debug→demo, release→prod.
+- **Enlace público del APK**: además, si el `versionName` de `app/build.gradle.kts` cambió, el
+  workflow crea un **release de GitHub** con etiqueta `v<versión>-<versionCode>` y adjunta el APK
+  de producción. Para repartirlo por correo se usa el enlace fijo, que no pide cuenta de GitHub:
+  `https://github.com/rtorreslaz-pixel/SFcalidad/releases/latest/download/app-release.apk`.
+  Si la etiqueta ya existe no se vuelve a publicar (un rebuild de la misma versión no pisa el APK
+  ya repartido): **para publicar una versión nueva hay que subir `versionName`/`versionCode`**.
 
 ## 5. Trabajo local (entorno de desarrollo)
 - Si `node_modules` se corrompe: `npm install`; luego **`npx prisma generate`** (cliente en `src/generated/prisma`) y, si falla el binario nativo, `cd node_modules/better-sqlite3 && npx node-gyp rebuild --release`.
